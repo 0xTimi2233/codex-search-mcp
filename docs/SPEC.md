@@ -45,18 +45,18 @@
 ## 3. 架构与交互流
 
 ```mermaid
-flowchart TD
+flowchart TB
     subgraph Host["MCP 宿主 (Pi / Cursor / Claude Desktop)"]
-        Caller["Agent 或模型发起 Tool Call"]
+        Caller["Agent 客户端<br>发起 Tool Call"]
     end
 
     subgraph Server["codex-search-mcp (stdio 独立进程)"]
-        Dispatcher["MCP Router (@modelcontextprotocol/sdk)"]
-        AuthModule["凭据加载器<br>(~/.pi/agent/auth.json -> JWT 解码)"]
-        SessionMgr["会话管理器<br>(UUIDv7 生成与连接级单例维持)"]
-        Sanitizer["隐私收敛与载荷构造器<br>(白名单字段序列化 / 强制 gpt-6-luna)"]
-        Network["HTTP 出站引擎 (原生 fetch)<br>(伪装请求头 / 状态码防护)"]
-        Parser["响应解析与截断器<br>(提取 output 纯文本 / 预算保护)"]
+        Dispatcher["MCP 路由分发器<br>基于 @modelcontextprotocol/sdk"]
+        AuthModule["凭据加载器<br>~/.pi/agent/auth.json 提取 JWT"]
+        SessionMgr["会话管理器<br>维护 UUIDv7 进程级单例"]
+        Sanitizer["隐私收敛与载荷构造<br>纯白名单序列化 / 强制 gpt-6-luna"]
+        Network["HTTP 出站引擎<br>伪装 Header 与错误码防护"]
+        Parser["响应解析与截断<br>提取 output 文本 / 预算保护"]
 
         Dispatcher --> Sanitizer
         AuthModule --> Network
