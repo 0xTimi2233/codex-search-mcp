@@ -5,6 +5,7 @@
   "schedule": ["after 6am and before 7am on monday"],
   "labels": ["dependencies"],
   "dependencyDashboard": true,
+  "platformAutomerge": true,
   "packageRules": [
     {
       "description": "非主版本更新（minor/patch/lockFile）按生态分组并自动合并",
