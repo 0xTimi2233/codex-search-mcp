@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: 构建跨平台二进制 (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: bun-linux-x64
+            artifact: codex-search-mcp-linux-x64
+          - os: macos-latest
+            target: bun-darwin-arm64
+            artifact: codex-search-mcp-darwin-arm64
+          - os: macos-latest
+            target: bun-darwin-x64
+            artifact: codex-search-mcp-darwin-x64
+          - os: windows-latest
+            target: bun-windows-x64
+            artifact: codex-search-mcp-windows-x64.exe
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: "1.4.3"
+      - run: bun install --frozen-lockfile
+      - name: 编译独立二进制与通用轻量脚本
+        shell: bash
+        run: |
+          mkdir -p dist
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            bun build --target=bun --minify index.ts --outfile dist/codex-search-mcp.js
+            chmod +x dist/codex-search-mcp.js
+          fi
+          bun build --compile --minify --target=${{ matrix.target }} index.ts --outfile dist/${{ matrix.artifact }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: artifacts-${{ matrix.target }}
+          path: dist/*
+          retention-days: 1
+
+  publish:
+    name: 发布 GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: 下载构建产物
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: release-artifacts
+          merge-multiple: true
+      - name: 生成校验和并创建 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          cd release-artifacts
+          sha256sum codex-search-mcp* > SHA256SUMS
+          gh release create "$TAG_NAME" --generate-notes --title "$TAG_NAME" *
