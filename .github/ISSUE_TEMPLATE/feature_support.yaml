@@ -1,0 +1,21 @@
+name: Feature Support
+description: 提出新增能力诉求、演进建议或架构增强方案
+title: "[Feature Support]: "
+labels: ["type/feat"]
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: 业务背景与痛点
+      description: 阐明当前的限制、遇到了何种阻碍以及为何需要这项能力。
+      placeholder: 请在此描述具体的业务场景与现实挑战。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 期望方案与设计
+      description: 阐述你所建议的 API 形式、工作流交互或具体实现构想。
+      placeholder: 请描述该功能应当如何运作，包含预期的调用方式或输出样式。
+    validations:
+      required: true

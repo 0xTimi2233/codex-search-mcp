@@ -1,0 +1,27 @@
+[
+  {
+    "name": "type/bug",
+    "color": "d73a4a",
+    "description": "系统缺陷、逻辑错误或运行异常"
+  },
+  {
+    "name": "type/feat",
+    "color": "a2eeef",
+    "description": "新增功能特性与能力支持"
+  },
+  {
+    "name": "status/ready-for-agent",
+    "color": "0e8a16",
+    "description": "上下文与验收标准明确，智能体可直接领取实现"
+  },
+  {
+    "name": "status/needs-human",
+    "color": "fbca04",
+    "description": "执行受阻挂起，需要人类进行决策、授权或方向确认"
+  },
+  {
+    "name": "status/wontfix",
+    "color": "cfd3d7",
+    "description": "不予支持、不予采纳或超出当前项目规划边界"
+  }
+]

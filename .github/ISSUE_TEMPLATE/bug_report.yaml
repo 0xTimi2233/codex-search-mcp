@@ -1,0 +1,39 @@
+name: Bug Report
+description: 提交系统缺陷、异常崩溃或不符合预期的行为
+title: "[Bug Report]: "
+labels: ["type/bug"]
+body:
+  - type: textarea
+    id: environment
+    attributes:
+      label: 运行环境
+      description: 填写操作系统版本、核心运行时版本以及关键依赖版本。
+      placeholder: |
+        - 操作系统：如 macOS 15.0
+        - 核心依赖：如 Rust 1.85 / Bun 1.2
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤
+      description: 清晰列出能够稳定复现该异常的具体操作流程。
+      placeholder: |
+        1. 执行某条命令或发起请求
+        2. 触发特定分支条件
+        3. 观察到异常输出
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: 预期行为
+      description: 阐明在执行上述步骤后，系统理应呈现的正确预期或行为表现。
+      placeholder: 请在此描述你期望看到的正常结果或正确输出。
+    validations:
+      required: true
+  - type: textarea
+    id: logs-and-screenshots
+    attributes:
+      label: 日志与截图
+      description: 粘贴相关错误日志、调用堆栈或直接拖入屏幕截图。

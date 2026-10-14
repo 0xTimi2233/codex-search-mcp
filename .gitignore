@@ -1,0 +1,11 @@
+node_modules/
+dist/
+out/
+
+coverage/
+
+logs/
+*.log
+
+.env
+.env*.local
