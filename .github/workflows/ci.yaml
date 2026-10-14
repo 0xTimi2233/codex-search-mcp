@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+  schedule:
+    - cron: "30 23 * * 0"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.head.sha || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: 检查与测试
+    permissions:
+      contents: read
+    uses: ./.github/workflows/checks.yaml
+
+  security:
+    name: 安全审计
+    permissions:
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/security.yaml
+
+  gate:
+    name: 合并门禁
+    needs: [checks, security]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: 校验检查结果
+        env:
+          CHECKS_RESULT: ${{ needs.checks.result }}
+          SECURITY_RESULT: ${{ needs.security.result }}
+        run: |
+          if [ "$CHECKS_RESULT" != "success" ] || [ "$SECURITY_RESULT" != "success" ]; then
+            exit 1
+          fi
